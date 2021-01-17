@@ -2,15 +2,18 @@ import os
 import cv2
 import numpy as np
 
+BASE_DIR = os.path.dirname(__file__)
+cascade_file_location = os.path.join(BASE_DIR,"haar_face.xml")
+
 #face detection function
 def face_detection(test_img):
     gray_img = cv2.cvtColor(test_img,cv2.COLOR_BGR2GRAY)
-    face_haar_cascade = cv2.CascadeClassifier('D:/Akash Chatterjee/Final Year Project/FaceRecognition/haar_face.xml')
+    face_haar_cascade = cv2.CascadeClassifier(cascade_file_location)
     #image processing
 
 
     
-    faces = face_haar_cascade.detectMultiScale(gray_img,scaleFactor=1.3,minNeighbors=5)
+    faces = face_haar_cascade.detectMultiScale(gray_img,scaleFactor=1.2,minNeighbors=5,minSize=(30, 30))
     return faces,gray_img
 
 def labels_for_training_data(directory):

@@ -3,10 +3,14 @@ import os
 import numpy as np
 import face as fr
 
-test_img = cv2.imread('D:/Akash Chatterjee/Final Year Project/FaceRecognition/test_imgs/Obama_test2.jpg')
 
 BASE_DIR = os.path.dirname(__file__)
 TRAINING_DIR = os.path.join(BASE_DIR,"training_imgs")
+print(BASE_DIR)
+
+test_img = cv2.imread(os.path.join(BASE_DIR,"obamaandfriends.jpg"))
+
+
 
 try:
     trained_model = os.path.join(os.path.dirname(BASE_DIR),'trained_model.yml')
