@@ -8,10 +8,17 @@ test_img = cv2.imread('D:/Akash Chatterjee/Final Year Project/FaceRecognition/te
 BASE_DIR = os.path.dirname(__file__)
 TRAINING_DIR = os.path.join(BASE_DIR,"training_imgs")
 
+try:
+    trained_model = os.path.join(os.path.dirname(BASE_DIR),'trained_model.yml')
+    print(trained_model)
+    face_recognizer = fr.create_model()
+    face_recognizer.read(trained_model)
+except:
+    print("Training the model")
+    faces,faceID = fr.labels_for_training_data(TRAINING_DIR)
 
-faces,faceID = fr.labels_for_training_data(TRAINING_DIR)
+    face_recognizer = fr.train_classifier(faces,faceID)
 
-face_recognizer = fr.train_classifier(faces,faceID)
 name = {1:"Obama",2:"Akash"}
 
 
@@ -26,6 +33,7 @@ for face in faces_detected:
     print("confidence:",confidence,"label:",label)
     fr.draw_rect(test_img,face)
     predicted_name = name[label]
+    print(predicted_name)
     fr.put_text(test_img,predicted_name,x,y)
 
 resized_img = cv2.resize(test_img,(1000,700))

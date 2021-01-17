@@ -38,10 +38,16 @@ def labels_for_training_data(directory):
             faceID.append(int(ID))
     return faces,faceID
 
-def train_classifier(faces,faceID):
+def create_model():
     face_recognizer = cv2.face.LBPHFaceRecognizer_create()
-    face_recognizer.train(faces,np.array(faceID))
     return face_recognizer
+
+def train_classifier(faces,faceID):
+    face_recognizer = create_model()
+    face_recognizer.train(faces,np.array(faceID))
+    face_recognizer.save('trained_model.yml')
+    return face_recognizer
+
 
 def draw_rect(test_img,face):
     (x,y,w,h) = face
