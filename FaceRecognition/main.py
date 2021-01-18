@@ -8,7 +8,7 @@ BASE_DIR = os.path.dirname(__file__)
 TRAINING_DIR = os.path.join(BASE_DIR,"training_imgs")
 print(BASE_DIR)
 
-test_img = cv2.imread(os.path.join(BASE_DIR,"obamaandfriends.jpg"))
+test_img = cv2.imread(os.path.join(BASE_DIR,"Amartya6.jpg"))
 
 
 
@@ -23,7 +23,7 @@ except:
 
     face_recognizer = fr.train_classifier(faces,faceID)
 
-name = {1:"Obama",2:"Akash"}
+name = {1:"Obama",2:"Akash",5:"Amarty",6:"Ben",4:"sashi",3:"kalam"}
 
 
 faces_detected,gray_img = fr.face_detection(test_img)

@@ -3,7 +3,36 @@ import cv2
 import numpy as np
 
 BASE_DIR = os.path.dirname(__file__)
-cascade_file_location = os.path.join(BASE_DIR,"haar_face.xml")
+cascade_file_location = os.path.join(BASE_DIR,"frontal_face.xml")
+
+#checking file
+def file_check(s):
+    l=["png","jpg","jpeg"]
+    s2=s.split('.')[-1]
+    if s2 in l:
+        return True
+    else:
+        return False
+def erode(img):
+    kernel = np.ones((5,5),np.uint8)
+    erosion = cv2.erode(img,kernel,iterations = 1)
+    return erosion
+
+def dilate(img):
+    kernel = np.ones((5,5),np.uint8)
+    dilation = cv2.dilate(img,kernel,iterations = 1)
+    return dilation
+def openimg(img):
+    kernel = np.ones((5,5),np.uint8)
+    opening = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
+    return opening
+def closeimg(img):
+    kernel = np.ones((5,5),np.uint8)
+    closing = cv2.morphologyEx(img, cv2.MORPH_CLOSE, kernel)
+    return closing
+
+
+
 
 #face detection function
 def face_detection(test_img):
@@ -13,16 +42,20 @@ def face_detection(test_img):
 
 
     
-    faces = face_haar_cascade.detectMultiScale(gray_img,scaleFactor=1.2,minNeighbors=5,minSize=(30, 30))
+    faces = face_haar_cascade.detectMultiScale( gray_img, scaleFactor= 1.2,minNeighbors= 3)
     return faces,gray_img
 
 def labels_for_training_data(directory):
     faces = []
     faceID = []
+    count = 1
 
     for path,subdirnames,filenames in os.walk(directory):
+
         for filename in filenames:
             if filename.startswith("."):
+                continue
+            if not file_check(filename):
                 continue
             ID = os.path.basename(path)
             img_path = os.path.join(path,filename)
@@ -31,10 +64,49 @@ def labels_for_training_data(directory):
                 print("Image not loaded properly:",img_path)
                 continue
             faces_rect,gray_img = face_detection(test_img)
-            if len(faces_rect)!=1:
-                print("Face not recognized or more than 1 face")
-                continue #Skipping images with more  than 1 face detected in the training data
+            if len(faces_rect)!= 1:
+                
+                print("Face not recognized NORMALLY",filename,count)
+            #image prosessing operations : dilation, erosion, opening, closing.
+                dimg = dilate(test_img)
+                faces_rect,gray_img = face_detection(dimg)
+                if len(faces_rect)!= 1:
+                    print("Face not recognized after dilation",filename,count)
+                    oimg = openimg(test_img)
+                    faces_rect,gray_img = face_detection(oimg)
+                    if len(faces_rect)!= 1:
+                        print("Face not recognized after opening",filename,count)
+                        cimg = closeimg(test_img)
+                        faces_rect,gray_img = face_detection(cimg)
+                        if len(faces_rect)!= 1:
+                            print("Face not recognized after closing",filename,count)
+                            eimg = erode(test_img)
+                            faces_rect,gray_img = face_detection(eimg)
+                            if len(faces_rect)!= 1:
+                                print("Face not recognized after erosion",filename,count)
+
+                                count+= 1
+                                continue #Skipping images with more  than 1 face detected in the training data
+                
+
+
+                # for testing purpose , do not required for the exeqution.
+                #             else:
+                #                 draw_rect(test_img,faces_rect[0])
+                #                 cv2.imshow("erosion",test_img)
+                #         else:
+                #             draw_rect(test_img,faces_rect[0])
+                #             cv2.imshow("closing",test_img)
+                #     else:
+                #         draw_rect(test_img,faces_rect[0])
+                #         cv2.imshow("opening",test_img)
+                # else:
+                #     draw_rect(test_img,faces_rect[0])
+                #     cv2.imshow("dilation",test_img)
+            
             (x,y,w,h) = faces_rect[0]
+
+
             #extracting only the face of the person
             roi_gray = gray_img[y:y+h,x:x+w]
             faces.append(roi_gray)
