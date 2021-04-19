@@ -3,7 +3,7 @@ import json
 import pymongo
 import urllib
 from bson.objectid import ObjectId
-import json_to_dict as jtd
+from . import json_to_dict as jtd
 
 app = Flask(__name__)
 mongodb_uri="mongodb+srv://faceattend:" + urllib.parse.quote("stcet@123") + "@cluster0.af18n.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
@@ -17,6 +17,9 @@ except Exception as e:
 else:
     print("Connection to DB is successful")
 
+
+json_enc = "application/json"
+
 @app.route('/users/add',methods=["POST"])
 def create_user():
     try:
@@ -28,7 +31,7 @@ def create_user():
                     "message":"email already exists",
                     }),
                 status=403,
-                mimetype="application/json"
+                mimetype=json_enc
             )    
         user = {
             "first_name":request.form["first_name"],
@@ -39,15 +42,13 @@ def create_user():
             "email":request.form["email"]
             }
         dbResponse = db.users.insert_one(user)
-        # for attribute in dir(dbResponse):
-        #     print(attribute)
         return Response(
             response = json.dumps({
                 "message":"user_created",
                 "id":f"{dbResponse.inserted_id}"
                 }),
             status=200,
-            mimetype="application/json"
+            mimetype=json_enc
         )
     except Exception as ex:
         print(ex)
@@ -65,7 +66,7 @@ def get_some_users():
                 "response": resp
                 }),
             status=200,
-            mimetype="application/json"
+            mimetype=json_enc
         )
     except Exception as ex:
         print(ex)
@@ -74,7 +75,7 @@ def get_some_users():
                 "message":"cannot read users",
                 }),
             status=500,
-            mimetype="application/json"
+            mimetype=json_enc
         )
 
 @app.route('/users/<string:id>/delete',methods=["Delete"])
@@ -88,7 +89,7 @@ def delete_user(id):
                 "message": "User deleted"
             }),
             status=200,
-            mimetype="application/json"
+            mimetype=json_enc
         )
     except Exception as ex:
         print(ex)
@@ -98,7 +99,7 @@ def delete_user(id):
                 "message": "something went wrong"
             }),
             status=500,
-            mimetype="application/json"
+            mimetype=json_enc
         )
 
 @app.route('/users/<string:id>', methods=["Get"])
@@ -113,7 +114,7 @@ def get_one_user(id):
                 "response": resp
             }),
             status=200,
-            mimetype="application/json"
+            mimetype=json_enc
         )
     except Exception as ex:
         print(ex)
@@ -123,7 +124,7 @@ def get_one_user(id):
                 "message": "Something went wrong!"
             }),
             status=500,
-            mimetype="application/json"
+            mimetype=json_enc
         )
 
 @app.route('/users/<string:id>/update', methods=["Put"])
@@ -146,7 +147,7 @@ def update_one_user(id):
                 "response": resp
             }),
             status=200,
-            mimetype="application/json"
+            mimetype=json_enc
         )
     except Exception as ex:
         print(ex)
@@ -156,7 +157,7 @@ def update_one_user(id):
                 "message": "Something went wrong!"
             }),
             status=500,
-            mimetype="application/json"
+            mimetype=json_enc
         )
 
 if __name__ == "__main__":
