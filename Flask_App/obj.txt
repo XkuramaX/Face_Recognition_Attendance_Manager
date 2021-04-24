@@ -1,0 +1,9 @@
+{
+    datetime: 12/3/21 8:30am
+    roll: roll_number
+    give_attendance: true/false 
+}
+
+yes/no
+
+sum{ roll : roll_number and where give_attendance = true}

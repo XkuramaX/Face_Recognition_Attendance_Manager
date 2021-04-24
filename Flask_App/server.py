@@ -14,9 +14,9 @@ app = Flask(__name__)
 bcrypt = Bcrypt(app)
 
 app.config['SECRET_KEY'] = 'f1a2c3e4r5e6c7o8g9n0i1t2i3o4n6'
-SESSION_TYPE = 'redis'
+# SESSION_TYPE = 'redis'
 app.config.from_object(__name__)
-Session(app)
+# Session(app)
 
 
 mongodb_uri="mongodb+srv://faceattend:" + urllib.parse.quote("stcet@123") + "@cluster0.af18n.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
